@@ -1,11 +1,11 @@
+/* eslint-disable react/prop-types */
 import { useState } from "react";
 import {
   MdOutlineArrowBackIos,
   MdOutlineArrowForwardIos,
 } from "react-icons/md";
-const Calendar = () => {
-  const [date, setDate] = useState(new Date());
-  const [selected, setSelected] = useState(null);
+const Calendar = ({ setSelDate, selDate }) => {
+  const [date, setDate] = useState(selDate);
 
   const handlePrevMonth = () => {
     setDate(new Date(date.getFullYear(), date.getMonth() - 1, 1));
@@ -22,21 +22,6 @@ const Calendar = () => {
     date.getMonth(),
     1
   ).getDay();
-
-  const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
 
   const daysInMonth = getDaysInMonth(date.getFullYear(), date.getMonth());
 
@@ -60,7 +45,11 @@ const Calendar = () => {
           </button>
         </div>
         <div className="select-box">
-          <div>{months[date.getMonth()]}</div>
+          <div>
+            {new Intl.DateTimeFormat("en-US", {
+              month: "long",
+            }).format(date)}
+          </div>
           <div>{date.getFullYear()}</div>
         </div>
       </div>
@@ -82,21 +71,20 @@ const Calendar = () => {
             <div
               key={index}
               className={
-                new Date(selected) ===
-                new Date(date.getFullYear(), date.getMonth(), day)
+                selDate?.getDate() === day &&
+                selDate.getMonth() === date.getMonth() &&
+                selDate.getFullYear() === date.getFullYear()
                   ? "active day"
                   : "day"
               }
               onClick={() => {
                 if (day) {
-                  console.log(day, months[date.getMonth()], date.getFullYear());
                   let newDate = new Date(
                     date.getFullYear(),
                     date.getMonth(),
                     day
                   );
-                  console.log(selected, newDate);
-                  setSelected(newDate);
+                  setSelDate(newDate);
                 }
               }}
             >
