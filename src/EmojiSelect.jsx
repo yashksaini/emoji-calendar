@@ -7,9 +7,20 @@ import { IoIosCheckmarkCircle } from "react-icons/io";
 const EmojiSelect = ({ selDate }) => {
   const [searchText, setSearchText] = useState("");
   const [savedEmojies, setSavedEmojies] = useState(
-    localStorage.getItem("savedEmojies") || []
+    JSON.parse(localStorage.getItem("savedEmojies")) || []
   );
   const [filteredEmojies, setFilteredEmojies] = useState(emojisData);
+
+  useEffect(() => {
+    const filterEmojies = () => {
+      const data = emojisData.filter((emoji) =>
+        emoji.name.toLowerCase().includes(searchText.toLowerCase())
+      );
+      setFilteredEmojies(data);
+    };
+    filterEmojies();
+  }, [savedEmojies, searchText]);
+
   const handleSaveEmoji = (emoji) => {
     let selectedEmojiList =
       JSON.parse(localStorage.getItem("savedEmojies")) || [];
@@ -22,15 +33,6 @@ const EmojiSelect = ({ selDate }) => {
     localStorage.setItem("savedEmojies", JSON.stringify(selectedEmojiList));
     setSavedEmojies(selectedEmojiList);
   };
-  useEffect(() => {
-    const filterEmojies = () => {
-      const data = emojisData.filter((emoji) =>
-        emoji.name.toLowerCase().includes(searchText.toLowerCase())
-      );
-      setFilteredEmojies(data);
-    };
-    filterEmojies();
-  }, [savedEmojies, searchText]);
 
   return (
     <div className="emoji-container">
