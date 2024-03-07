@@ -50,7 +50,7 @@ a {
   z-index: 10;
   top: 0;
   left: 0;
-  padding: 8px 16px;
+  padding: 8px 0;
 }
 .emoji-head h1 {
   font-size: 20px;
@@ -78,7 +78,7 @@ a {
   gap: 16px;
   padding: 8px 16px;
 }
-.emoji-container span {
+.emoji-select span {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -87,7 +87,7 @@ a {
   aspect-ratio: 1;
   position: relative;
 }
-.emoji-container span:hover {
+.emoji-select span:hover {
   background-color: var(--muted);
   cursor: pointer;
 }
@@ -98,6 +98,81 @@ a {
   width: 20px;
   height: 20px;
   color: var(--blue);
+}
+.top-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+.top-box div {
+  flex: 1;
+}
+.top-box span {
+  aspect-ratio: 1;
+  width: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100%;
+}
+.list-icon {
+  font-size: 24px;
+}
+.top-box span:hover {
+  cursor: pointer;
+  background-color: var(--muted);
+}
+.emoji-list {
+  width: 100%;
+  padding: 16px 8px;
+}
+.emoji-data {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 16px 0;
+}
+.emoji-data span {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+}
+.emoji-data span:nth-child(2) {
+  color: green;
+}
+.emoji-data input {
+  flex: 1;
+  height: 40px;
+  padding: 0 8px;
+  border-radius: 0px;
+  border: none;
+  border-bottom: 1px solid #b8b8b8;
+}
+.emoji-data input:focus {
+  outline: none;
+  border-bottom: 1px solid var(--blue);
+}
+.save-data {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: ceter;
+}
+.save-data button {
+  border: none;
+  background-color: var(--blue);
+  color: #fff;
+  width: 80px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
 }
 .calendar {
   width: 580px;
