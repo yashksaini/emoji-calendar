@@ -6,35 +6,59 @@ import { IoIosCheckmarkCircle } from "react-icons/io";
 import { IoMdArrowBack } from "react-icons/io";
 import { MdFormatListBulletedAdd } from "react-icons/md";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
+import { MdAddReaction } from "react-icons/md";
+import { toast } from "react-toastify";
 const EmojiSelect = ({ selDate }) => {
+  let storedEmojiContent;
+  try {
+    storedEmojiContent = JSON.parse(localStorage.getItem("emojiContent"));
+    console.log(storedEmojiContent);
+  } catch (error) {
+    // If there's an error parsing JSON, log it and use an empty object
+    console.error("Error parsing JSON from localStorage:", error);
+    storedEmojiContent = {};
+  }
   const [searchText, setSearchText] = useState("");
   const [screen, setScreen] = useState(1);
-  const [savedEmojies, setSavedEmojies] = useState(
-    JSON.parse(localStorage.getItem("savedEmojies")) || []
+  const [savedemojis, setSavedemojis] = useState(
+    JSON.parse(localStorage.getItem("savedemojis")) || []
   );
-  const [filteredEmojies, setFilteredEmojies] = useState(emojisData);
+  const [filteredemojis, setFilteredemojis] = useState(emojisData);
+  const [emojiContent, setEmojicontent] = useState(storedEmojiContent || {});
 
   useEffect(() => {
-    const filterEmojies = () => {
+    const isEmojiContentEmpty = Object.keys(emojiContent).length === 0;
+    if (isEmojiContentEmpty) {
+      const initialContent = savedemojis.reduce((acc, emoji) => {
+        acc[emoji] = "";
+        return acc;
+      }, {});
+      setEmojicontent(initialContent);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    const filteremojis = () => {
       const data = emojisData.filter((emoji) =>
         emoji.name.toLowerCase().includes(searchText.toLowerCase())
       );
-      setFilteredEmojies(data);
+      setFilteredemojis(data);
     };
-    filterEmojies();
-  }, [savedEmojies, searchText]);
+    filteremojis();
+  }, [savedemojis, searchText]);
 
   const handleSaveEmoji = (emoji) => {
     let selectedEmojiList =
-      JSON.parse(localStorage.getItem("savedEmojies")) || [];
+      JSON.parse(localStorage.getItem("savedemojis")) || [];
 
     if (selectedEmojiList.indexOf(emoji.id) !== -1) {
       selectedEmojiList = selectedEmojiList.filter((id) => id !== emoji.id);
     } else {
       selectedEmojiList.push(emoji.id);
     }
-    localStorage.setItem("savedEmojies", JSON.stringify(selectedEmojiList));
-    setSavedEmojies(selectedEmojiList);
+    localStorage.setItem("savedemojis", JSON.stringify(selectedEmojiList));
+    setSavedemojis(selectedEmojiList);
   };
 
   return (
@@ -68,7 +92,7 @@ const EmojiSelect = ({ selDate }) => {
                 day: "numeric",
               }).format(selDate)}
             </h1>
-            <p>Selected Emojies {savedEmojies.length}</p>
+            <p>Selected emojis {savedemojis.length}</p>
           </div>
         </div>
 
@@ -85,7 +109,7 @@ const EmojiSelect = ({ selDate }) => {
       </div>
       {screen === 2 && (
         <div className="emoji-select">
-          {filteredEmojies.map((emoji, index) => {
+          {filteredemojis.map((emoji, index) => {
             return (
               <>
                 <span
@@ -96,7 +120,7 @@ const EmojiSelect = ({ selDate }) => {
                   }}
                 >
                   {emoji.icon}
-                  {savedEmojies.indexOf(emoji.id) !== -1 && (
+                  {savedemojis.indexOf(emoji.id) !== -1 && (
                     <IoIosCheckmarkCircle className="emoji-tick" />
                   )}
                 </span>{" "}
@@ -113,16 +137,46 @@ const EmojiSelect = ({ selDate }) => {
       {screen === 1 && (
         <div className="emoji-list">
           <div className="save-data">
-            <button>
+            <button
+              onClick={() => {
+                localStorage.setItem(
+                  "emojiContent",
+                  JSON.stringify(emojiContent)
+                );
+                toast.success("Emojis Saved", { toastId: "save-content" });
+              }}
+            >
               Save <IoMdCheckmarkCircleOutline />
             </button>
+            {savedemojis.length === 0 && (
+              <div className="no-emoji">
+                <p>No emojis added till now</p>
+                <button
+                  onClick={() => {
+                    setScreen(2);
+                  }}
+                >
+                  Add emojis <MdAddReaction />
+                </button>
+              </div>
+            )}
           </div>
           {emojisData.map((emoji, index) => {
-            if (savedEmojies.indexOf(emoji.id) !== -1) {
+            if (savedemojis.indexOf(emoji.id) !== -1) {
               return (
                 <div className="emoji-data" key={index}>
                   <span>{emoji.icon}</span>
-                  <input type="text" placeholder="Write..." />
+                  <input
+                    type="text"
+                    placeholder="Add text.."
+                    value={emojiContent[emoji.id]}
+                    onChange={(e) => {
+                      setEmojicontent((prev) => ({
+                        ...prev,
+                        [emoji.id]: e.target.value,
+                      }));
+                    }}
+                  />
                 </div>
               );
             } else {
