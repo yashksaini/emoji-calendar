@@ -6,11 +6,11 @@ import {
 } from "react-icons/md";
 const Calendar = ({ setSelDate, selDate }) => {
   const [date, setDate] = useState(selDate);
-
+  // Function used for going back months
   const handlePrevMonth = () => {
     setDate(new Date(date.getFullYear(), date.getMonth() - 1, 1));
   };
-
+ // Function used for going forward months
   const handleNextMonth = () => {
     setDate(new Date(date.getFullYear(), date.getMonth() + 1, 1));
   };
