@@ -19,10 +19,11 @@ const Calendar = ({ setSelDate, selDate, savedemojis }) => {
   ).getDay();
   const [calendarData, setCalendarData] = useState([]);
 
+  // Function used for going back months
   const handlePrevMonth = () => {
     setDate(new Date(date.getFullYear(), date.getMonth() - 1, 1));
   };
-
+  // Function used for going forward months
   const handleNextMonth = () => {
     setDate(new Date(date.getFullYear(), date.getMonth() + 1, 1));
   };
