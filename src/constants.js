@@ -374,4 +374,19 @@ export const emojisData = [
     name: "Musical Keyboard",
     id: 75,
   },
+  {
+    icon: "✅",
+    name: "Check",
+    id: 76,
+  },
+  {
+    icon: "❌",
+    name: "Cross",
+    id: 77,
+  },
+  {
+    icon: "✔️",
+    name: "Tick",
+    id: 78,
+  },
 ];

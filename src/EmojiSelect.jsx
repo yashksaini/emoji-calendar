@@ -8,11 +8,10 @@ import { MdFormatListBulletedAdd } from "react-icons/md";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 import { MdAddReaction } from "react-icons/md";
 import { toast } from "react-toastify";
-const EmojiSelect = ({ selDate }) => {
+const EmojiSelect = ({ selDate, savedemojis, setSavedemojis }) => {
   let storedEmojiContent;
   try {
     storedEmojiContent = JSON.parse(localStorage.getItem("emojiContent"));
-    console.log(storedEmojiContent);
   } catch (error) {
     // If there's an error parsing JSON, log it and use an empty object
     console.error("Error parsing JSON from localStorage:", error);
@@ -20,9 +19,6 @@ const EmojiSelect = ({ selDate }) => {
   }
   const [searchText, setSearchText] = useState("");
   const [screen, setScreen] = useState(1);
-  const [savedemojis, setSavedemojis] = useState(
-    JSON.parse(localStorage.getItem("savedemojis")) || []
-  );
   const [filteredemojis, setFilteredemojis] = useState(emojisData);
   const [emojiContent, setEmojicontent] = useState(storedEmojiContent || {});
 

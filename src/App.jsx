@@ -6,10 +6,21 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 function App() {
   const [selDate, setSelDate] = useState(new Date());
+  const [savedemojis, setSavedemojis] = useState(
+    JSON.parse(localStorage.getItem("savedemojis")) || []
+  );
   return (
     <div className="container">
-      <Calendar selDate={selDate} setSelDate={setSelDate} />
-      <EmojiSelect selDate={selDate} />
+      <Calendar
+        selDate={selDate}
+        setSelDate={setSelDate}
+        savedemojis={savedemojis}
+      />
+      <EmojiSelect
+        selDate={selDate}
+        setSavedemojis={setSavedemojis}
+        savedemojis={savedemojis}
+      />
       <ToastContainer
         position="top-center"
         autoClose={2000}

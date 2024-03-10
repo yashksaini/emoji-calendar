@@ -272,18 +272,43 @@ a {
   display: flex;
   justify-content: center;
   align-items: center;
+  border: 1px solid #f7f7f7;
+  background-color: #f7f7f7;
 }
 
 .day {
   padding: 10px;
-  aspect-ratio: 1;
+  aspect-ratio: 0.8;
   cursor: pointer;
-  font-size: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
   color: var(--black);
-  border-radius: 100%;
+  position: relative;
+  border: 1px solid #f7f7f7;
+}
+.date {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 40%;
+  font-size: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.emoji-date {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 60%;
+  border-radius: 4px;
+  font-size: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .day:hover {
   background-color: var(--muted);
@@ -299,9 +324,34 @@ a {
 }
 .active,
 .active:hover {
-  background-color: var(--blue);
-  color: #fff;
+  border: 1px solid var(--blue);
+  color: var(--blue);
   font-weight: 500;
+}
+.cal-emoji-list {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 16px;
+  border: 1px solid #f7f7f7;
+}
+.cal-emoji {
+  width: 40px;
+  aspect-ratio: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100%;
+}
+.cal-emoji:hover {
+  background-color: var(--muted);
+  cursor: pointer;
+}
+.emoji-active {
+  border: 1px solid var(--blue);
+  background-color: var(--muted);
 }
 /* Customize tooltip (React Tooltip) */
 .react-tooltip {
