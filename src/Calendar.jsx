@@ -6,30 +6,30 @@ import {
 } from "react-icons/md";
 import { emojisData } from "./constants";
 import { toast } from "react-toastify";
+import SavedEmojes from "./SavedEmojes";
 
 const Calendar = ({ setSelDate, selDate, savedemojis }) => {
-  const [date, setDate] = useState(selDate);
-  const today = new Date();
   const db = window.data_base;
   const [currEmoji, setCurrEmoji] = useState(0);
+  const [date, setDate] = useState(selDate);
+  const today = new Date();
   const firstDayOfMonth = new Date(
     date.getFullYear(),
     date.getMonth(),
     1
   ).getDay();
-  const [calendarData, setCalendarData] = useState([]);
+  const [monthEmojiData, setMonthEmojiData] = useState([]);
 
-  // Function used for going back months
   const handlePrevMonth = () => {
     setDate(new Date(date.getFullYear(), date.getMonth() - 1, 1));
   };
-  // Function used for going forward months
   const handleNextMonth = () => {
     setDate(new Date(date.getFullYear(), date.getMonth() + 1, 1));
   };
 
-  const getDaysInMonth = (year, month) =>
-    new Date(year, month + 1, 0).getDate();
+  const getDaysInMonth = (year, month) => {
+    return new Date(year, month + 1, 0).getDate();
+  };
   const daysInMonth = getDaysInMonth(date.getFullYear(), date.getMonth());
 
   const generateCalendarDays = () => {
@@ -39,28 +39,43 @@ const Calendar = ({ setSelDate, selDate, savedemojis }) => {
     }
     return days;
   };
-  const addEmojiToDate = (date) => {
+  const addEmojiToDate = async (date) => {
+    const currentEmojiValue = currEmoji;
     let selectedDate = new Date(date).toISOString();
     const tx = db.transaction(["emojiStore"], "readwrite");
     const dataStore = tx.objectStore("emojiStore");
+
+    console.log(selectedDate);
     const getRequest = dataStore.index("date").get(selectedDate);
 
-    getRequest.onsuccess = (event) => {
+    getRequest.onsuccess = async (event) => {
       // Check for data already present or not
-      const exitingData = event.target.result;
-      if (exitingData) {
-        exitingData.emoji = currEmoji;
-        dataStore.put(exitingData);
-      } else {
+      const existingData = event.target.result;
+
+      console.log("CURR VALUE", currentEmojiValue);
+      if (existingData) {
+        existingData.emoji = currentEmojiValue;
+        await dataStore.put(existingData);
+        getInitialData();
+      } else if (!existingData) {
         const data = {
           date: selectedDate,
-          emoji: currEmoji,
+          emoji: currentEmojiValue,
         };
-        dataStore.add(data);
+        await dataStore.add(data);
+        getInitialData();
       }
     };
+    getRequest.onerror = (error) => {
+      console.log(error);
+    };
   };
-  const getCompleteEmojiData = (db) => {
+  useEffect(() => {
+    // Any side effects related to currEmoji can be performed here
+    console.log("Current Emoji:", currEmoji);
+  }, [currEmoji]);
+
+  const getCompleteEmojiData = async (db) => {
     let filledData = [];
     if (db) {
       const tx = db.transaction(["emojiStore"], "readonly");
@@ -82,68 +97,59 @@ const Calendar = ({ setSelDate, selDate, savedemojis }) => {
       ).toISOString();
 
       const range = IDBKeyRange.bound(start, end);
-      const request = mStore.index("date").openCursor(range);
-      request.onsuccess = (e) => {
-        const cursor = e.target.result;
-        if (cursor) {
-          filledData[cursor.value.date] = cursor.value;
-          cursor.continue();
-        }
-        setCalendarData(drawCalendar(filledData));
-      };
+
+      return new Promise((resolve, reject) => {
+        const request = mStore.index("date").openCursor(range);
+
+        request.onsuccess = (e) => {
+          const cursor = e.target.result;
+          if (cursor) {
+            filledData[cursor.value.date] = cursor.value;
+            cursor.continue();
+          } else {
+            resolve(filledData);
+          }
+        };
+
+        request.onerror = (error) => {
+          reject(error);
+        };
+      });
     }
   };
   useEffect(() => {
-    const request = indexedDB.open("emoji-calendar", "1");
-    request.onsuccess = (e) => {
-      const db = e.target.result;
-      getCompleteEmojiData(db);
-    };
+    getInitialData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [date]);
 
-  const drawCalendar = (monthEmojiData) => {
-    return [
-      ...Array(firstDayOfMonth).fill(null),
-      ...generateCalendarDays(),
-    ].map((day, index) => {
-      const currDate = new Date(date.getFullYear(), date.getMonth(), day);
-      const selectedDate = currDate.toISOString();
-      const emoji = emojisData.find((data) => {
-        return data.id === monthEmojiData[selectedDate]?.emoji;
-      });
-      return (
-        <div
-          key={index}
-          className={
-            today?.getDate() === day &&
-            today.getMonth() === date.getMonth() &&
-            today.getFullYear() === date.getFullYear()
-              ? "active day"
-              : "day"
-          }
-          onClick={() => {
-            if (day) {
-              let newDate = new Date(date.getFullYear(), date.getMonth(), day);
-              setSelDate(newDate);
-              console.log(currEmoji, day, newDate);
-              if (currEmoji === 0) {
-                toast.error("Please select an emoji", {
-                  toastId: "empty-emoji-error",
-                });
-              } else {
-                addEmojiToDate(newDate);
-              }
-            }
-          }}
-        >
-          <span className="date">{day}</span>
-          {emoji?.icon && <span className="emoji-date">{emoji?.icon}</span>}
-        </div>
-      );
-    });
+  const getInitialData = () => {
+    const request = indexedDB.open("emoji-calendar", "1");
+    request.onsuccess = async (e) => {
+      const db = e.target.result;
+      if (db) {
+        const data = await getCompleteEmojiData(db);
+        setMonthEmojiData(data);
+      }
+    };
   };
 
+  const handleAddEmoji = (day) => {
+    let newDate = new Date(date.getFullYear(), date.getMonth(), day);
+    setSelDate(newDate);
+    console.log(currEmoji);
+    if (currEmoji === 0) {
+      toast.error("Please select an emoji", {
+        toastId: "empty-emoji-error",
+      });
+    } else {
+      addEmojiToDate(newDate);
+      getInitialData();
+    }
+  };
+
+  const saveCurrEmoji = (emoji_id) => {
+    setCurrEmoji(emoji_id);
+  };
   return (
     <div className="calendar">
       <div className="header">
@@ -175,30 +181,45 @@ const Calendar = ({ setSelDate, selDate, savedemojis }) => {
           <div>SAT</div>
         </div>
         <div className="cal-emoji-list">
-          {emojisData.map((emoji, index) => {
-            if (savedemojis.indexOf(emoji.id) !== -1) {
-              return (
-                <div
-                  key={index}
-                  onClick={() => {
-                    console.log(emoji);
-                    setCurrEmoji(emoji.id);
-                  }}
-                  className={
-                    currEmoji === emoji.id
-                      ? "cal-emoji emoji-active"
-                      : "cal-emoji"
-                  }
-                >
-                  <span>{emoji.icon}</span>
-                </div>
-              );
-            } else {
-              return null;
+          <SavedEmojes
+            savedemojis={savedemojis}
+            currEmoji={currEmoji}
+            saveCurrEmoji={saveCurrEmoji}
+          />
+        </div>
+        <div className="days">
+          {[
+            ...Array(firstDayOfMonth).fill(null),
+            ...generateCalendarDays(),
+          ].map((day, index) => {
+            const currDate = new Date(date.getFullYear(), date.getMonth(), day);
+            const selectedDate = currDate.toISOString();
+            let emoji = null;
+            if (monthEmojiData[selectedDate]) {
+              emoji = emojisData[monthEmojiData[selectedDate].emoji - 1];
             }
+            return (
+              <div
+                key={index}
+                className={
+                  today?.getDate() === day &&
+                  today.getMonth() === date.getMonth() &&
+                  today.getFullYear() === date.getFullYear()
+                    ? "active day"
+                    : "day"
+                }
+                onClick={() => {
+                  handleAddEmoji(day);
+                }}
+              >
+                <span className="date">{day}</span>
+                {emoji?.icon && (
+                  <span className="emoji-date">{emoji?.icon}</span>
+                )}
+              </div>
+            );
           })}
         </div>
-        <div className="days">{calendarData}</div>
       </div>
     </div>
   );
