@@ -1,33 +1,32 @@
 /* eslint-disable react/prop-types */
-import { Tooltip as ReactTooltip } from "react-tooltip";
 import { emojisData } from "./constants";
 import { useEffect, useState } from "react";
-import { IoIosCheckmarkCircle } from "react-icons/io";
 import { IoMdArrowBack } from "react-icons/io";
 import { MdFormatListBulletedAdd } from "react-icons/md";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 import { MdAddReaction } from "react-icons/md";
 import { toast } from "react-toastify";
-const EmojiSelect = ({ selDate, savedemojis, setSavedemojis }) => {
+import Emoji from "./components/Emoji";
+const EmojiSelect = ({ savedemojis, setSavedemojis }) => {
   let storedEmojiContent;
   try {
     storedEmojiContent = JSON.parse(localStorage.getItem("emojiContent"));
   } catch (error) {
-    // If there's an error parsing JSON, log it and use an empty object
     console.error("Error parsing JSON from localStorage:", error);
     storedEmojiContent = {};
   }
   const [searchText, setSearchText] = useState("");
-  const [screen, setScreen] = useState(1);
-  const [filteredemojis, setFilteredemojis] = useState(emojisData);
-  const [emojiContent, setEmojicontent] = useState(storedEmojiContent || {});
+  const [screen, setScreen] = useState(1); // For swiching screen between selected list and all emojis
+  const [filteredemojis, setFilteredemojis] = useState(emojisData); // Filtered emoji data for searchText
+  const [emojiContent, setEmojicontent] = useState(storedEmojiContent || {}); // Used for storing the text for an emoji
 
   useEffect(() => {
     const isEmojiContentEmpty = Object.keys(emojiContent).length === 0;
     if (isEmojiContentEmpty) {
-      const initialContent = savedemojis.reduce((acc, emoji) => {
-        acc[emoji] = "";
-        return acc;
+      // Converting the object data to an array with key as emoji_id
+      const initialContent = savedemojis.reduce((arr, emoji_id) => {
+        arr[emoji_id] = "";
+        return arr;
       }, {});
       setEmojicontent(initialContent);
     }
@@ -35,6 +34,7 @@ const EmojiSelect = ({ selDate, savedemojis, setSavedemojis }) => {
   }, []);
 
   useEffect(() => {
+    // Filter emoji based on search text
     const filteremojis = () => {
       const data = emojisData.filter((emoji) =>
         emoji.name.toLowerCase().includes(searchText.toLowerCase())
@@ -43,7 +43,7 @@ const EmojiSelect = ({ selDate, savedemojis, setSavedemojis }) => {
     };
     filteremojis();
   }, [savedemojis, searchText]);
-
+  //Save emoji to localstorage
   const handleSaveEmoji = (emoji) => {
     let selectedEmojiList =
       JSON.parse(localStorage.getItem("savedemojis")) || [];
@@ -56,7 +56,12 @@ const EmojiSelect = ({ selDate, savedemojis, setSavedemojis }) => {
     localStorage.setItem("savedemojis", JSON.stringify(selectedEmojiList));
     setSavedemojis(selectedEmojiList);
   };
-
+  const saveData = () => {
+    localStorage.setItem("emojiContent", JSON.stringify(emojiContent));
+    toast.success("Saved Successfully", {
+      toastId: "save-content",
+    });
+  };
   return (
     <div className="emoji-container">
       <div className="emoji-head">
@@ -81,13 +86,7 @@ const EmojiSelect = ({ selDate, savedemojis, setSavedemojis }) => {
           )}
 
           <div>
-            <h1>
-              {new Intl.DateTimeFormat("en-US", {
-                weekday: "long",
-                month: "long",
-                day: "numeric",
-              }).format(selDate)}
-            </h1>
+            <h1>{screen === 2 ? "Select emojis" : "Your emojis"}</h1>
             <p>Selected emojis {savedemojis.length}</p>
           </div>
         </div>
@@ -102,48 +101,43 @@ const EmojiSelect = ({ selDate, savedemojis, setSavedemojis }) => {
             placeholder="Search emoji.."
           />
         )}
+        {screen === 1 && (
+          <button onClick={saveData} className="save-btn">
+            Save <IoMdCheckmarkCircleOutline />
+          </button>
+        )}
       </div>
       {screen === 2 && (
-        <div className="emoji-select">
-          {filteredemojis.map((emoji, index) => {
-            return (
-              <>
-                <span
+        <>
+          <div className="emoji-select">
+            {filteredemojis
+              .filter((emoji) => savedemojis.indexOf(emoji.id) !== -1)
+              .map((emoji, index) => (
+                <Emoji
+                  handleSaveEmoji={handleSaveEmoji}
+                  emoji={emoji}
                   key={index}
-                  data-tooltip-id={"tooltip-" + index}
-                  onClick={() => {
-                    handleSaveEmoji(emoji);
-                  }}
-                >
-                  {emoji.icon}
-                  {savedemojis.indexOf(emoji.id) !== -1 && (
-                    <IoIosCheckmarkCircle className="emoji-tick" />
-                  )}
-                </span>{" "}
-                <ReactTooltip
-                  id={"tooltip-" + index}
-                  place="bottom"
-                  content={emoji.name}
+                  savedemojis={savedemojis}
                 />
-              </>
-            );
-          })}
-        </div>
+              ))}
+          </div>
+          <div className="emoji-select">
+            {filteredemojis
+              .filter((emoji) => savedemojis.indexOf(emoji.id) == -1)
+              .map((emoji, index) => (
+                <Emoji
+                  handleSaveEmoji={handleSaveEmoji}
+                  emoji={emoji}
+                  key={index}
+                  savedemojis={savedemojis}
+                />
+              ))}
+          </div>
+        </>
       )}
       {screen === 1 && (
         <div className="emoji-list">
           <div className="save-data">
-            <button
-              onClick={() => {
-                localStorage.setItem(
-                  "emojiContent",
-                  JSON.stringify(emojiContent)
-                );
-                toast.success("Emojis Saved", { toastId: "save-content" });
-              }}
-            >
-              Save <IoMdCheckmarkCircleOutline />
-            </button>
             {savedemojis.length === 0 && (
               <div className="no-emoji">
                 <p>No emojis added till now</p>
