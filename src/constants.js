@@ -389,5 +389,30 @@ export const emojisData = [
     name: "Tick",
     id: 78,
   },
+  {
+    icon: "☀️",
+    name: "Sun",
+    id: 79,
+  },
+  {
+    icon: "🌙",
+    name: "Moon",
+    id: 80,
+  },
+  {
+    icon: "🌗",
+    name: "Half Moon",
+    id: 81,
+  },
+  {
+    icon: "🌥️",
+    name: "Clouds",
+    id: 82,
+  },
+  {
+    icon: "⛈️",
+    name: "Thunder",
+    id: 83,
+  },
 ];
 export const weekdays = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];

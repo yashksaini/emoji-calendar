@@ -1,10 +1,11 @@
 /* eslint-disable react/prop-types */
 import { emojisData } from "./constants";
 import { useEffect, useState } from "react";
-import { IoMdArrowBack } from "react-icons/io";
+import { IoMdArrowForward } from "react-icons/io";
 import { MdFormatListBulletedAdd } from "react-icons/md";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 import { MdAddReaction } from "react-icons/md";
+import { CgMenuRight } from "react-icons/cg";
 import { toast } from "react-toastify";
 import Emoji from "./components/Emoji";
 const EmojiSelect = ({ savedemojis, setSavedemojis }) => {
@@ -16,6 +17,7 @@ const EmojiSelect = ({ savedemojis, setSavedemojis }) => {
     storedEmojiContent = {};
   }
   const [searchText, setSearchText] = useState("");
+  const [isSideBarOpen, setIsSideBarOpen] = useState(false);
   const [screen, setScreen] = useState(1); // For swiching screen between selected list and all emojis
   const [filteredemojis, setFilteredemojis] = useState(emojisData); // Filtered emoji data for searchText
   const [emojiContent, setEmojicontent] = useState(storedEmojiContent || {}); // Used for storing the text for an emoji
@@ -63,10 +65,30 @@ const EmojiSelect = ({ savedemojis, setSavedemojis }) => {
     });
   };
   return (
-    <div className="emoji-container">
+    <div
+      className={
+        isSideBarOpen
+          ? "emoji-container emoji-container-active"
+          : "emoji-container"
+      }
+    >
+      <div
+        className={
+          isSideBarOpen ? "arrow-open arrow-open-active" : "arrow-open"
+        }
+        onClick={() => {
+          setIsSideBarOpen(!isSideBarOpen);
+        }}
+      >
+        <CgMenuRight />
+      </div>
       <div className="emoji-head">
         <div className="top-box">
-          {screen === 1 ? (
+          <div>
+            <h1>{screen === 2 ? "Select emojis" : "Your emojis"}</h1>
+            <p>Selected emojis {savedemojis.length}</p>
+          </div>
+          {screen === 1 && (
             <span
               onClick={() => {
                 setScreen(2);
@@ -74,20 +96,16 @@ const EmojiSelect = ({ savedemojis, setSavedemojis }) => {
             >
               <MdFormatListBulletedAdd className="list-icon" />
             </span>
-          ) : (
+          )}
+          {screen === 2 && (
             <span
               onClick={() => {
                 setScreen(1);
               }}
             >
-              <IoMdArrowBack />
+              <IoMdArrowForward />
             </span>
           )}
-
-          <div>
-            <h1>{screen === 2 ? "Select emojis" : "Your emojis"}</h1>
-            <p>Selected emojis {savedemojis.length}</p>
-          </div>
         </div>
 
         {screen === 2 && (
