@@ -135,6 +135,7 @@ const EmojiSelect = ({ savedemojis, setSavedemojis }) => {
                   emoji={emoji}
                   key={index}
                   savedemojis={savedemojis}
+                  keyValue={"saved-"}
                 />
               ))}
           </div>
@@ -147,6 +148,7 @@ const EmojiSelect = ({ savedemojis, setSavedemojis }) => {
                   emoji={emoji}
                   key={index}
                   savedemojis={savedemojis}
+                  keyValue={"unsaved-"}
                 />
               ))}
           </div>

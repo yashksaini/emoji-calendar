@@ -3,7 +3,7 @@ import { emojisData } from "../constants";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import { MdDelete } from "react-icons/md";
 const SavedEmojes = ({ savedemojis, saveCurrEmoji, currEmoji }) => {
-  let emojiContent;
+  let emojiContent = [];
   try {
     emojiContent = JSON.parse(localStorage.getItem("emojiContent"));
   } catch (error) {
@@ -54,10 +54,11 @@ const SavedEmojes = ({ savedemojis, saveCurrEmoji, currEmoji }) => {
             }
           >
             <span>{emojisData[emoji_id - 1].icon}</span>
+
             <ReactTooltip
               id={"saved-tooltip-" + emoji_id}
               place="bottom"
-              content={emojiContent[emoji_id]}
+              content={emojiContent && emojiContent[emoji_id]}
             />
           </div>
         );
