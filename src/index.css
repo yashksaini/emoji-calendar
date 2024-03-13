@@ -312,6 +312,21 @@ a {
   justify-content: center;
   align-items: center;
 }
+.emoji-date span {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: scale(0);
+  animation: zoomIn 0.2s ease 0s 1 forwards;
+}
+@keyframes zoomIn {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
 .day:hover {
   background-color: var(--muted);
   color: var(--blue);

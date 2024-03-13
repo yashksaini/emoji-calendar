@@ -1,14 +1,22 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 import {
   MdOutlineArrowBackIos,
   MdOutlineArrowForwardIos,
 } from "react-icons/md";
-import { emojisData } from "./constants";
+import { emojisData, weekdays } from "./constants";
 import { toast } from "react-toastify";
-import SavedEmojes from "./SavedEmojes";
+import SavedEmojes from "./components/SavedEmojes";
 
 const Calendar = ({ setSelDate, selDate, savedemojis }) => {
+  let emojiContent;
+  try {
+    emojiContent = JSON.parse(localStorage.getItem("emojiContent"));
+  } catch (error) {
+    console.error("Error parsing JSON from localStorage:", error);
+    emojiContent = {};
+  }
   const db = window.data_base;
   const [currEmoji, setCurrEmoji] = useState(0);
   const [date, setDate] = useState(selDate);
@@ -40,30 +48,61 @@ const Calendar = ({ setSelDate, selDate, savedemojis }) => {
     return days;
   };
   const addEmojiToDate = async (date) => {
-    const currentEmojiValue = currEmoji;
     let selectedDate = new Date(date).toISOString();
     const tx = db.transaction(["emojiStore"], "readwrite");
     const dataStore = tx.objectStore("emojiStore");
-
-    console.log(selectedDate);
     const getRequest = dataStore.index("date").get(selectedDate);
 
     getRequest.onsuccess = async (event) => {
       // Check for data already present or not
       const existingData = event.target.result;
-
-      console.log("CURR VALUE", currentEmojiValue);
       if (existingData) {
-        existingData.emoji = currentEmojiValue;
+        existingData.emoji = currEmoji;
         await dataStore.put(existingData);
         getInitialData();
       } else if (!existingData) {
         const data = {
           date: selectedDate,
-          emoji: currentEmojiValue,
+          emoji: currEmoji,
         };
         await dataStore.add(data);
         getInitialData();
+      }
+    };
+    getRequest.onerror = (error) => {
+      console.log(error);
+    };
+  };
+  const removeEmojiFromDate = async (date) => {
+    let selectedDate = new Date(date).toISOString();
+    const tx = db.transaction(["emojiStore"], "readwrite");
+    const dataStore = tx.objectStore("emojiStore");
+    const getRequest = dataStore.index("date").get(selectedDate);
+
+    getRequest.onsuccess = async (event) => {
+      // Check for data already present or not
+      const existingData = event.target.result;
+      if (existingData) {
+        const deleteRequest = dataStore.delete(existingData.id);
+        const formattedDate = new Date(existingData.date).toLocaleDateString(
+          "en-US",
+          {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          }
+        );
+        deleteRequest.onsuccess = () => {
+          toast.success("Removed for " + formattedDate, {
+            toastId: "clear-emoji" + existingData.id,
+          });
+          getInitialData();
+        };
+        deleteRequest.onerror = () => {
+          console.log("Error in deleting emoji data");
+        };
+      } else {
+        toast.error("No emoji found", { toastId: "no-emoji-error" });
       }
     };
     getRequest.onerror = (error) => {
@@ -132,7 +171,6 @@ const Calendar = ({ setSelDate, selDate, savedemojis }) => {
       }
     };
   };
-
   const handleAddEmoji = (day) => {
     let newDate = new Date(date.getFullYear(), date.getMonth(), day);
     setSelDate(newDate);
@@ -141,6 +179,9 @@ const Calendar = ({ setSelDate, selDate, savedemojis }) => {
       toast.error("Please select an emoji", {
         toastId: "empty-emoji-error",
       });
+    } else if (currEmoji === -1) {
+      // used for clearing emoji
+      removeEmojiFromDate(newDate);
     } else {
       addEmojiToDate(newDate);
       getInitialData();
@@ -172,13 +213,9 @@ const Calendar = ({ setSelDate, selDate, savedemojis }) => {
       </div>
       <div className="calendar-body">
         <div className="weekdays">
-          <div>SUN</div>
-          <div>MON</div>
-          <div>TUE</div>
-          <div>WED</div>
-          <div>THU</div>
-          <div>FRI</div>
-          <div>SAT</div>
+          {weekdays.map((name) => (
+            <div key={name}>{name}</div>
+          ))}
         </div>
         <div className="cal-emoji-list">
           <SavedEmojes
@@ -211,10 +248,24 @@ const Calendar = ({ setSelDate, selDate, savedemojis }) => {
                 onClick={() => {
                   handleAddEmoji(day);
                 }}
+                data-tooltip-id={"cal-tooltip-" + day}
               >
                 <span className="date">{day}</span>
                 {emoji?.icon && (
-                  <span className="emoji-date">{emoji?.icon}</span>
+                  <span className="emoji-date">
+                    <span style={{ animationDelay: day * 0.02 + "s" }}>
+                      {emoji?.icon}
+                    </span>
+                  </span>
+                )}
+                {emoji?.icon && (
+                  <ReactTooltip
+                    id={"cal-tooltip-" + day}
+                    place="bottom"
+                    content={
+                      day + " " + emoji?.id ? emojiContent[emoji?.id] : ""
+                    }
+                  />
                 )}
               </div>
             );

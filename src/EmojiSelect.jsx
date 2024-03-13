@@ -66,7 +66,7 @@ const EmojiSelect = ({ savedemojis, setSavedemojis }) => {
     <div className="emoji-container">
       <div className="emoji-head">
         <div className="top-box">
-          {screen === 1 && (
+          {screen === 1 ? (
             <span
               onClick={() => {
                 setScreen(2);
@@ -74,8 +74,7 @@ const EmojiSelect = ({ savedemojis, setSavedemojis }) => {
             >
               <MdFormatListBulletedAdd className="list-icon" />
             </span>
-          )}
-          {screen === 2 && (
+          ) : (
             <span
               onClick={() => {
                 setScreen(1);

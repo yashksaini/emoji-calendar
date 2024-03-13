@@ -390,3 +390,4 @@ export const emojisData = [
     id: 78,
   },
 ];
+export const weekdays = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
