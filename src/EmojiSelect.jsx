@@ -57,6 +57,7 @@ const EmojiSelect = ({ savedemojis, setSavedemojis }) => {
     }
     localStorage.setItem("savedemojis", JSON.stringify(selectedEmojiList));
     setSavedemojis(selectedEmojiList);
+    saveData();
   };
   const saveData = () => {
     localStorage.setItem("emojiContent", JSON.stringify(emojiContent));
@@ -125,34 +126,16 @@ const EmojiSelect = ({ savedemojis, setSavedemojis }) => {
         )}
       </div>
       {screen === 2 && (
-        <>
-          <div className="emoji-select">
-            {filteredemojis
-              .filter((emoji) => savedemojis.indexOf(emoji.id) !== -1)
-              .map((emoji, index) => (
-                <Emoji
-                  handleSaveEmoji={handleSaveEmoji}
-                  emoji={emoji}
-                  key={index}
-                  savedemojis={savedemojis}
-                  keyValue={"saved-"}
-                />
-              ))}
-          </div>
-          <div className="emoji-select">
-            {filteredemojis
-              .filter((emoji) => savedemojis.indexOf(emoji.id) == -1)
-              .map((emoji, index) => (
-                <Emoji
-                  handleSaveEmoji={handleSaveEmoji}
-                  emoji={emoji}
-                  key={index}
-                  savedemojis={savedemojis}
-                  keyValue={"unsaved-"}
-                />
-              ))}
-          </div>
-        </>
+        <div className="emoji-select">
+          {filteredemojis.map((emoji, index) => (
+            <Emoji
+              handleSaveEmoji={handleSaveEmoji}
+              emoji={emoji}
+              key={index}
+              savedemojis={savedemojis}
+            />
+          ))}
+        </div>
       )}
       {screen === 1 && (
         <div className="emoji-list">

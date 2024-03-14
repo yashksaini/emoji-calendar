@@ -21,6 +21,10 @@ function App() {
         setSavedemojis={setSavedemojis}
         savedemojis={savedemojis}
       />
+      <div className="top-bar">
+        <img src="./emoji-calendar.png" />
+        <p>Emoji Calendar</p>
+      </div>
       <ToastContainer
         position="top-center"
         autoClose={2000}

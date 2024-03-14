@@ -12,7 +12,6 @@ const SavedEmojes = ({ savedemojis, saveCurrEmoji, currEmoji }) => {
   }
   const handleSelectCurrent = (emoji_id) => {
     saveCurrEmoji(emoji_id);
-    console.log("SAVED", emoji_id);
   };
 
   return (

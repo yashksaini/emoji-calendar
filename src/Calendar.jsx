@@ -109,10 +109,6 @@ const Calendar = ({ setSelDate, selDate, savedemojis }) => {
       console.log(error);
     };
   };
-  useEffect(() => {
-    // Any side effects related to currEmoji can be performed here
-    console.log("Current Emoji:", currEmoji);
-  }, [currEmoji]);
 
   const getCompleteEmojiData = async (db) => {
     let filledData = [];

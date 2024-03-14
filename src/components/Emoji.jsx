@@ -1,12 +1,11 @@
 /* eslint-disable react/prop-types */
 import { IoIosCheckmarkCircle } from "react-icons/io";
 import { Tooltip as ReactTooltip } from "react-tooltip";
-const Emoji = ({ emoji, handleSaveEmoji, savedemojis, keyValue }) => {
-  console.log(emoji, keyValue);
+const Emoji = ({ emoji, handleSaveEmoji, savedemojis }) => {
   return (
     <>
       <span
-        data-tooltip-id={"tooltip-" + keyValue + emoji.id}
+        data-tooltip-id={"tooltip-" + emoji.id}
         onClick={() => {
           handleSaveEmoji(emoji);
         }}
@@ -16,11 +15,11 @@ const Emoji = ({ emoji, handleSaveEmoji, savedemojis, keyValue }) => {
           <IoIosCheckmarkCircle className="emoji-tick" />
         )}
         <ReactTooltip
-          id={"tooltip-" + keyValue + emoji.id}
+          id={"tooltip-" + emoji.id}
           place="bottom"
           content={emoji.name}
         />
-      </span>{" "}
+      </span>
     </>
   );
 };

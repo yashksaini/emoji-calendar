@@ -385,12 +385,15 @@ a {
   z-index: 8;
 }
 .toastContainer .Toastify__toast {
-  padding: 12px !important;
+  padding: 8px !important;
   color: var(--black);
-  border-radius: 50px !important;
+  border-radius: 12px !important;
   box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
 }
 .arrow-open {
+  display: none;
+}
+.top-bar {
   display: none;
 }
 @media only screen and (max-width: 1024px) {
@@ -403,6 +406,29 @@ a {
 
 @media only screen and (max-width: 768px) {
   /* Tablet */
+  .top-bar {
+    display: flex;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 64px;
+    background-color: #f7f7f7;
+    padding: 8px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px;
+  }
+  .top-bar img {
+    width: 48px;
+    aspect-ratio: 1;
+  }
+  .top-bar p {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--black);
+  }
   .emoji-container {
     width: 300px;
     min-height: 100vh;
@@ -421,15 +447,15 @@ a {
     transition: right 0.3s ease-in;
   }
   .arrow-open {
-    width: 40px;
-    height: 40px;
+    width: 64px;
+    height: 64px;
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: 8px 0 0 8px;
     background-color: var(--blue);
     color: #fff;
-    font-size: 20px;
+    font-size: 32px;
     position: fixed;
     right: 0;
     top: 0;
@@ -446,28 +472,26 @@ a {
   }
   .container {
     gap: 0px;
-    padding-top: 0px;
+    padding-top: 64px;
   }
   .calendar {
     margin-top: 0px;
   }
   .header {
     padding: 0px;
-    justify-content: flex-start;
     gap: 16px;
-    padding: 0px;
-    height: 48px;
+    padding: 12px 0;
   }
   .arrows {
     gap: 8px;
   }
   .arrows button {
-    font-size: 16px;
-    width: 36px;
+    border: 1px solid var(--blue);
+    color: var(--blue);
   }
   .select-box {
     gap: 8px;
-    font-size: 20px;
+    font-size: 24px;
   }
   .calendar-body {
     padding: 0px;
@@ -485,6 +509,16 @@ a {
   }
   .emoji-date {
     font-size: 14px;
+  }
+  .toastContainer {
+    padding: 16px;
+  }
+  .toastContainer .Toastify__toast {
+    padding: 8px !important;
+    color: var(--black);
+    border-radius: 12px !important;
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
+    margin-bottom: 8px;
   }
 }
 
