@@ -510,6 +510,25 @@ a {
   .emoji-date {
     font-size: 14px;
   }
+  .emoji-list {
+    width: 100%;
+    padding: 0 24px;
+  }
+  .emoji-data span {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+  .emoji-data input {
+    height: 36px;
+    letter-spacing: unset;
+    font-size: 14px;
+    font-weight: 400;
+  }
+  .emoji-data input::placeholder {
+    color: unset;
+    font-weight: 300;
+  }
   .toastContainer {
     padding: 16px;
   }
