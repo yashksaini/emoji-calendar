@@ -49,12 +49,12 @@ function App() {
             <img src="./emoji-calendar.png" />
             <h1>Emoji Calendar</h1>
             <span className="loader"></span>
-            <p>© 2024 Copyright </p>
+            <p>© 2024 Copyright :</p>
             <p>
               <a href="https://yashksaini.netlify.app/" target="_blank">
                 Yash Kumar Saini
               </a>{" "}
-              All rights reserved
+              All rights reserved 
             </p>
           </div>
         </div>
