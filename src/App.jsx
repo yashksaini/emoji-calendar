@@ -4,7 +4,7 @@ import Calendar from "./Calendar";
 import EmojiSelect from "./EmojiSelect";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-// App jsx file
+// App jsx files
 function App() {
   const [selDate, setSelDate] = useState(new Date());
   const [savedemojis, setSavedemojis] = useState(
@@ -55,7 +55,7 @@ function App() {
               <a href="https://yashksaini.netlify.app/" target="_blank">
                 Yash Kumar Saini
               </a>{" "}
-              All rights reserved 
+              All rights reserved
             </p>
           </div>
         </div>
