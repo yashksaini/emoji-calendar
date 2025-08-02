@@ -4,7 +4,7 @@ import Calendar from "./Calendar";
 import EmojiSelect from "./EmojiSelect";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-// App jsx files
+// App jsx file
 function App() {
   const [selDate, setSelDate] = useState(new Date());
   const [savedemojis, setSavedemojis] = useState(
